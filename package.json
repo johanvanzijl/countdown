@@ -1,10 +1,12 @@
 {
-  "name": "fruiti",
+  "name": "countdown",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev --hostname localhost",
     "build": "next build",
+    "build:webpack": "next build --webpack",
+    "typecheck": "tsc --noEmit",
     "start": "next start",
     "lint": "eslint",
     "prepare": "husky"
@@ -20,6 +22,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "babel-plugin-react-compiler": "1.0.0",
+    "baseline-browser-mapping": "^2.10.38",
     "eslint": "^9",
     "eslint-config-next": "16.0.1",
     "husky": "^9.1.7",
@@ -36,5 +39,6 @@
     "*.{json,md,css}": [
       "prettier --write"
     ]
-  }
+  },
+  "packageManager": "yarn@4.13.0+sha512.5c20ba010c99815433e5c8453112165e673f1c7948d8d2b267f4b5e52097538658388ebc9f9580656d9b75c5cc996f990f611f99304a2197d4c56d21eea370e7"
 }
