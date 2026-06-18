@@ -4,7 +4,7 @@ import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 const DEFAULT_MINUTES = 15;
-const VALID_MINUTES = new Set([15, 30]);
+const VALID_MINUTES = new Set([3, 5, 15, 30]);
 const WARNING_THRESHOLD_MS = 2 * 60 * 1000 + 30 * 1000;
 const TICK_INTERVAL_MS = 100;
 
