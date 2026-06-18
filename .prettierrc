@@ -1,0 +1,6 @@
+{
+  "printWidth": 100,
+  "proseWrap": "never",
+  "bracketSameLine": true,
+  "experimentalTernaries": true
+}
