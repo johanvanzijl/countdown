@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 const DEFAULT_MINUTES = 15;
@@ -37,6 +37,7 @@ export default function Home() {
           onStartStop={() => {}}
           startStopLabel="Start"
           disableButtons
+          isFinished={false}
           timerColor="#000000"
         />
       }>
@@ -57,6 +58,8 @@ function CountdownTimer({ initialDurationMs }: { initialDurationMs: number }) {
   const [remainingMs, setRemainingMs] = useState(() => initialDurationMs);
   const [isRunning, setIsRunning] = useState(false);
   const [endTime, setEndTime] = useState<number | null>(null);
+  const [isAlarmActive, setIsAlarmActive] = useState(false);
+  const alarmAudioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     if (!isRunning || endTime === null) {
@@ -71,6 +74,7 @@ function CountdownTimer({ initialDurationMs }: { initialDurationMs: number }) {
       if (nextRemainingMs === 0) {
         setIsRunning(false);
         setEndTime(null);
+        setIsAlarmActive(true);
       }
     };
 
@@ -83,6 +87,31 @@ function CountdownTimer({ initialDurationMs }: { initialDurationMs: number }) {
     };
   }, [endTime, isRunning]);
 
+  useEffect(() => {
+    const alarmAudio = alarmAudioRef.current;
+
+    if (!alarmAudio) {
+      return;
+    }
+
+    if (!isAlarmActive) {
+      alarmAudio.pause();
+      alarmAudio.currentTime = 0;
+      return;
+    }
+
+    alarmAudio.currentTime = 0;
+
+    void alarmAudio.play().catch(() => {
+      // Ignore playback failures from browser media policies.
+    });
+
+    return () => {
+      alarmAudio.pause();
+      alarmAudio.currentTime = 0;
+    };
+  }, [isAlarmActive]);
+
   const handleStartStop = () => {
     if (isRunning) {
       const pausedRemainingMs = endTime === null ? remainingMs : Math.max(0, endTime - Date.now());
@@ -90,6 +119,11 @@ function CountdownTimer({ initialDurationMs }: { initialDurationMs: number }) {
       setRemainingMs(pausedRemainingMs);
       setIsRunning(false);
       setEndTime(null);
+      return;
+    }
+
+    if (isAlarmActive) {
+      setIsAlarmActive(false);
       return;
     }
 
@@ -104,24 +138,30 @@ function CountdownTimer({ initialDurationMs }: { initialDurationMs: number }) {
   const handleClear = () => {
     setIsRunning(false);
     setEndTime(null);
+    setIsAlarmActive(false);
     setRemainingMs(selectedDurationMs);
   };
 
   const timerColor = remainingMs <= WARNING_THRESHOLD_MS ? "#ff0e0e" : "#000000";
 
   return (
-    <TimerLayout
-      displayText={formatTime(remainingMs)}
-      onClear={handleClear}
-      onStartStop={handleStartStop}
-      startStopLabel={isRunning ? "Stop" : "Start"}
-      timerColor={timerColor}
-    />
+    <>
+      <audio ref={alarmAudioRef} aria-hidden="true" loop preload="auto" src="/classic-alarm.wav" />
+      <TimerLayout
+        displayText={formatTime(remainingMs)}
+        isFinished={isAlarmActive}
+        onClear={handleClear}
+        onStartStop={handleStartStop}
+        startStopLabel={isRunning || isAlarmActive ? "Stop" : "Start"}
+        timerColor={timerColor}
+      />
+    </>
   );
 }
 
 function TimerLayout({
   displayText,
+  isFinished,
   onClear,
   onStartStop,
   startStopLabel,
@@ -129,6 +169,7 @@ function TimerLayout({
   disableButtons = false,
 }: {
   displayText: string;
+  isFinished: boolean;
   onClear: () => void;
   onStartStop: () => void;
   startStopLabel: string;
@@ -141,7 +182,7 @@ function TimerLayout({
         <section className="rounded-[2rem] border-[6px] border-[#2d241a] bg-[#fbfbea] px-4 py-8 shadow-[0_10px_0_#2d241a] sm:px-8 sm:py-12">
           <div
             aria-live="polite"
-            className="select-none text-center font-mono text-[clamp(3.5rem,15vw,10rem)] leading-none tracking-[0.08em]"
+            className={`select-none text-center font-mono text-[clamp(3.5rem,15vw,10rem)] leading-none tracking-[0.08em] ${isFinished ? "timer-finished" : ""}`}
             style={{
               color: timerColor,
               fontVariantNumeric: "tabular-nums",

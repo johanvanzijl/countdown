@@ -1,74 +1,66 @@
-# 🧰 Consnet - Next.js 16 Template
+# Countdown Timer
 
-A production-ready **Next.js 16 + TypeScript** baseline for new projects.  
-Pre-configured with **Yarn 4 (Berry)**, **Tailwind CSS v4**, **ESLint + Prettier**, and **Husky + lint-staged**.
+A simple fullscreen countdown timer built with Next.js. It is designed for situations where you want a large, easy-to-read timer on screen with minimal controls.
 
----
+## Purpose
 
-## 🚀 Features
+This application provides:
 
-- **Next.js 16 App Router** with TypeScript strict mode
-- **Yarn 4 (Berry)** package manager
-- **Tailwind CSS v4** for utility-first styling
-- **ESLint + Prettier** with Next.js Core Web Vitals rules
-- **Husky v9 + lint-staged** pre-commit hooks
-- **Turbopack** and **React Compiler** enabled
-- Ready for **CI/CD** and GitHub Actions lint checks
+- A prominent `HH:MM:SS` countdown display
+- A fast start/stop workflow with a single clear action
+- A warning state when the timer is running low
+- A finished state that flashes the timer and plays `public/classic-alarm.wav`
 
----
+When the timer reaches zero, the display flashes and the alarm loops until `Stop` is pressed. `Clear` resets the timer back to its original duration.
 
-## 🧩 Getting Started
+## Duration From The URL
 
-### 1. Create a new project from this template
+The timer duration is configured through the query string:
 
-Click **“Use this template”** on GitHub  
-or use the CLI:
+- `?minutes=15`
+- `?duration=15`
 
-```bash
-gh repo create my-new-project --template consnet/next16-template
-cd my-new-project
+If no valid value is provided, the app defaults to `15` minutes.
+
+Examples:
+
+```text
+http://localhost:3000/?minutes=5
+http://localhost:3000/?duration=25
 ```
 
-### 2. Install dependencies
+## Run Locally
 
-It is important to run yarn install and yarn prepare to ensure that dependencies and husky hooks are installed correctly.
+Install dependencies:
 
 ```bash
 yarn install
 yarn prepare
 ```
 
-### 3. Run locally
+Start the development server:
 
 ```bash
 yarn dev
 ```
 
-## ⚙️ Scripts
+Then open `http://localhost:3000`.
 
-| Command             | Description                             |
-| ------------------- | --------------------------------------- |
-| `yarn dev`          | Start the Next.js dev server            |
-| `yarn build`        | Build for production                    |
-| `yarn start`        | Start the production server             |
-| `yarn lint`         | Run ESLint                              |
-| `yarn lint:fix`     | Auto-fix lint errors                    |
-| `yarn format`       | Check Prettier formatting               |
-| `yarn format:write` | Format all files                        |
-| `yarn prepare`      | Install Husky hooks                     |
-| `yarn lint-staged`  | Run staged file linting (used by Husky) |
+## Scripts
 
-## 🧼 Hooks
+| Command              | Description                           |
+| -------------------- | ------------------------------------- |
+| `yarn dev`           | Start the Next.js dev server          |
+| `yarn build`         | Build for production                  |
+| `yarn build:webpack` | Build with webpack explicitly         |
+| `yarn start`         | Start the production server           |
+| `yarn typecheck`     | Run TypeScript without emitting files |
+| `yarn lint`          | Run ESLint                            |
+| `yarn prepare`       | Install Husky hooks                   |
 
-### Pre-commit
+## Stack
 
-Husky automatically runs `lint-staged` before each commit to:
-
-- Fix lint errors (eslint --fix)
-- Format code (prettier --write)
-
-You can edit the commands inside .lintstagedrc.json if needed.
-
-### Pre-push
-
-Husky will run `yarn build` to ensure successful build before pushing to GH.
+- Next.js 16
+- React 19
+- TypeScript
+- Tailwind CSS 4
