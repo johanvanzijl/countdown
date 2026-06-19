@@ -4,7 +4,6 @@ import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 const DEFAULT_MINUTES = 15;
-const VALID_MINUTES = new Set([3, 5, 15, 30]);
 const WARNING_THRESHOLD_MS = 2 * 60 * 1000 + 30 * 1000;
 const TICK_INTERVAL_MS = 100;
 
@@ -12,7 +11,7 @@ function getMinutesFromSearchParams(searchParams: URLSearchParams) {
   const rawValue = searchParams.get("minutes") ?? searchParams.get("duration");
   const parsedValue = Number(rawValue);
 
-  if (VALID_MINUTES.has(parsedValue)) {
+  if (parsedValue > 0 && parsedValue < 1000) {
     return parsedValue;
   }
 
@@ -108,7 +107,7 @@ function CountdownTimer({ initialDurationMs }: { initialDurationMs: number }) {
     setRemainingMs(selectedDurationMs);
   };
 
-  const timerColor = remainingMs <= WARNING_THRESHOLD_MS ? "#8B0000" : "#000000";
+  const timerColor = remainingMs <= WARNING_THRESHOLD_MS ? "#ff0e0e" : "#000000";
 
   return (
     <TimerLayout
@@ -139,7 +138,7 @@ function TimerLayout({
   return (
     <main className="min-h-screen bg-[#efe7d2] px-4 py-6 text-black sm:px-6 sm:py-8">
       <div className="mx-auto flex min-h-[calc(100vh-3rem)] w-full max-w-6xl flex-col justify-center gap-6 sm:min-h-[calc(100vh-4rem)] sm:gap-8">
-        <section className="rounded-[2rem] border-[6px] border-[#2d241a] bg-[#fbf5e8] px-4 py-8 shadow-[0_10px_0_#2d241a] sm:px-8 sm:py-12">
+        <section className="rounded-[2rem] border-[6px] border-[#2d241a] bg-[#fbfbea] px-4 py-8 shadow-[0_10px_0_#2d241a] sm:px-8 sm:py-12">
           <div
             aria-live="polite"
             className="select-none text-center font-mono text-[clamp(3.5rem,15vw,10rem)] leading-none tracking-[0.08em]"
